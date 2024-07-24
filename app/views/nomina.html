@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../public/css/foundation.css">
+    <link rel="stylesheet" href="../../public/css/app.css">
+    <link rel="stylesheet" href="../../public/css/FormularioEmpleado.css">
+    <title>Formulario</title>
+    <style>
+        body{
+            margin: 0;
+            background-color: #ffff;
+          }
+          header {
+              display: flex;
+              height: 100px;
+              background-color: rgb(0, 0, 0);
+              justify-content: space-between;
+              align-items: center;
+              padding: 10px;
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              z-index: 1000; 
+          }
+  
+          .containerX {
+              margin-top: 150px; /* Ajusta el margen superior para dejar espacio para el menú */
+              position: relative;
+              z-index: 999; /* Asegura que el formulario esté por debajo del menú */
+          }
+            body{
+              font-family:sans-serif;
+              
+            }
+            .logo{
+              display: flex;
+              align-items:center;
+            }
+            a {
+              text-decoration:none;
+              list-style: none;
+              color:black;
+            }
+            ul{
+              list-style:none;
+            }
+            .logo img{
+              height:80px;
+              
+            }
+            ul, ol {
+                    list-style:none;
+           
+                }
+                
+          .nav{
+            width: 500px;
+            margin: 0 auto; 
+          }
+                
+          h2{
+            background-color:rgb(0, 0, 0);
+            font-size:50px;
+            
+            padding-top:23px;
+            color:rgb(255, 255, 255);
+            text-transform:uppercase;
+          }
+                .nav > li {
+                    float:left;
+                }
+                
+                .nav li a {
+                    background-color:rgb(0, 0, 0);
+                    color:#ffffff;
+                    text-decoration:none;
+                    padding:10px 12px;
+                    display:block;
+                    font-size: 25px;
+                    border-radius: 15px;
+                    margin-right:5px;
+                    margin-bottom:5px;
+                }
+                
+                .nav li a:hover {
+                    background-color:#787171;
+                }
+                
+                .nav li ul {
+                    display:none;
+                    position:absolute;
+                    min-width:140px;
+                    z-index: 999;
+           
+                }
+                
+                 .nav li:hover > ul {
+                    display:block;
+                }
+                
+                .nav li ul li {
+                    position:relative;
+           
+                }
+                
+                .nav li ul li ul {
+                    right:-140px;
+                    top:0px;
+          }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            
+
+            document.getElementById("suelBa").setAttribute("disabled", "disabled");
+            document.getElementById("diasLa").setAttribute("disabled", "disabled");
+            document.getElementById("salario").setAttribute("disabled", "disabled");
+            document.getElementById("auxTrans").setAttribute("readonly", "readonly");
+            document.getElementById("hed").setAttribute("disabled", "disabled");
+            document.getElementById("hen").setAttribute("disabled", "disabled");
+            document.getElementById("hedf").setAttribute("disabled", "disabled");
+            document.getElementById("vhe").setAttribute("readonly", "readonly");
+            document.getElementById("boni").setAttribute("disabled", "disabled");
+            document.getElementById("salDev").setAttribute("readonly", "readonly");
+            document.getElementById("dxs").setAttribute("disabled", "disabled");
+            document.getElementById("dxp").setAttribute("disabled", "disabled");
+            document.getElementById("td").setAttribute("disabled", "disabled");
+
+            // Set current date
+            document.getElementById("fecha_nomina").valueAsDate = new Date();
+
+            // Cargar años desde el servidor
+            fetchYears();
+
+            fetchBonus();
+
+           
+        });
+
+        function fetchYears() {
+            fetch('../controllers/get_years.php')
+                .then(response => response.json())
+                .then(data => {
+                    const yearSelect = document.getElementById('anio_nomina');
+                    data.forEach(year => {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        yearSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching years:', error));
+        }
+
+        function fetchBonus() {
+            fetch('../controllers/get_bonus.php')
+                .then(response => response.json())
+                .then(data => {
+                    const bonusSelect = document.getElementById('boni');
+                    data.forEach(bonus => {
+                        const option = document.createElement('option');
+                        option.value = bonus.valor_bono;
+                        option.textContent = bonus.tipo_bono;
+                        bonusSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching bonus:', error));
+        }
+
+        function habilitarCampos() {
+            document.getElementById("cedula").readOnly = true;
+            document.getElementById("diasLa").removeAttribute("disabled");
+            document.getElementById("salario").removeAttribute("disabled");
+            document.getElementById("hed").removeAttribute("disabled");
+            document.getElementById("hen").removeAttribute("disabled");
+            document.getElementById("hedf").removeAttribute("disabled");
+            document.getElementById("boni").removeAttribute("disabled");
+            document.getElementById("dxs").removeAttribute("disabled");
+            document.getElementById("dxp").removeAttribute("disabled");
+            document.getElementById("td").removeAttribute("disabled");
+        }
+
+        function verificarCedula() {
+            var cedula = document.getElementById("cedula").value;
+            // Crear objeto XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+            
+            // Configurar la solicitud
+            xhr.open("POST", "../controllers/verify.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            // Manejar la respuesta
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var respuesta = xhr.responseText;
+                    if (respuesta != "error") {
+                        // Parsear los datos JSON recibidos
+                        var empleado = JSON.parse(respuesta);
+                        console.log(empleado);
+                        
+                        // Mostrar los datos en los campos del formulario
+                        document.getElementById("suelBa").value = empleado.sueldo;
+                        document.getElementById("suelBa").removeAttribute("disabled");
+                    } else {
+                        alert("La cédula no se encuentra registrada.");
+                    }
+                }
+            };
+
+            // Enviar la solicitud con los datos de la cédula
+            xhr.send("cedula=" + encodeURIComponent(cedula));
+        }
+
+
+        function verificarNumeroNomina() {
+            var numero_nomina = document.getElementById("numero_nomina").value;
+            var cedula = document.getElementById("cedula").value; // Obtener valor de la cedula desde el formulario
+            var xhr = new XMLHttpRequest();
+            
+            xhr.open("POST", "../controllers/verifyNomina.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var respuesta = xhr.responseText;
+                    if (respuesta === "exist_nomina") {
+                        alert("Este número de nómina ya está creado.");
+                    } else if (respuesta === "exist_cedula") {
+                        alert("Esta cédula ya está asociada a un número de nómina.");
+                    } else if (respuesta === "success") {
+                        alert("Número de nómina válido. ¡Procede!");
+                    } else {
+                        alert("Error desconocido: " + respuesta);
+                    }
+                }
+            };
+        
+            xhr.send("numero_nomina=" + encodeURIComponent(numero_nomina) + "&cedula=" + encodeURIComponent(cedula));
+        }
+        
+        
+
+        function verificarSalarioYCalcularAuxilio() {
+            event.preventDefault(); // Prevent form submission
+
+            var salario = parseFloat(document.getElementById("suelBa").value);
+            var diasLaborados = parseInt(document.getElementById("diasLa").value);
+            var auxilioInput = document.getElementById("auxTrans");
+
+            if (!isNaN(salario) && !isNaN(diasLaborados) && diasLaborados > 0) {
+                if (salario < 2000000) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", "../controllers/getAuxilioTransporte.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/json");
+
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.auxilioTrans) {
+                                var auxilioTrans = parseFloat(response.auxilioTrans);
+                                var auxilioCalculado = (auxilioTrans / 30) * diasLaborados;
+                                auxilioInput.value = auxilioCalculado.toFixed(2);
+                            } else {
+                                alert("Error al obtener el auxilio de transporte.");
+                            }
+                        }
+                    };
+
+                    xhr.send();
+                } else {
+                    auxilioInput.value = "0.00";
+                }
+
+                var salarioCalculado = (salario / 30) * diasLaborados;
+                document.getElementById("salario").value = salarioCalculado.toFixed(2);
+            } else {
+                alert("Por favor, ingresa un sueldo básico y días laborados válidos.");
+            }
+        }
+
+
+        function calcularValorHorasExtras() {
+            var hed = parseInt(document.getElementById("hed").value) || 0;
+            var hen = parseInt(document.getElementById("hen").value) || 0;
+            var hedf = parseInt(document.getElementById("hedf").value) || 0;
+            
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "../controllers/getValoresExtras.php", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.valorEx && response.valorNo && response.valorFe) {
+                        var valorEx = parseFloat(response.valorEx);
+                        var valorNo = parseFloat(response.valorNo);
+                        var valorFe = parseFloat(response.valorFe);
+
+                        var totalHorasExtras = (hed * valorEx) + (hen * valorNo) + (hedf * valorFe);
+                        document.getElementById("vhe").value = totalHorasExtras.toFixed(2);
+
+
+
+                         // Calcular el salario devengado
+                         calcularSalarioDevengado();
+
+                    } else {
+                        alert("Error al obtener los valores de las horas extras.");
+                    }
+                }
+            };
+
+            xhr.send();
+        }
+        function calcularSalarioDevengado() {
+            var salario = parseFloat(document.getElementById("salario").value) || 0;
+            var valorHorasExtras = parseFloat(document.getElementById("vhe").value) || 0;
+            var salarioDevengado = salario + valorHorasExtras;
+
+            document.getElementById("salDev").value = salarioDevengado.toFixed(2);
+        }
+
+        function calcularDescuentos() {
+            var salarioDevengado = parseFloat(document.getElementById("salDev").value) || 0;
+            var dxs = salarioDevengado * 0.04;
+            var dxp = salarioDevengado * 0.04;
+        
+            document.getElementById("dxs").value = dxs.toFixed(2);
+            document.getElementById("dxp").value = dxp.toFixed(2);
+        
+            // Llamar la función para calcular el total devengado después de calcular los descuentos
+            calcularTotalDevengado();
+        }
+        
+        function calcularTotalDevengado() {
+            var salDev = parseFloat(document.getElementById("salDev").value) || 0;
+            var auxTrans = parseFloat(document.getElementById("auxTrans").value) || 0;
+            var boni = parseFloat(document.getElementById("boni").value) || 0;
+            var dxs = parseFloat(document.getElementById("dxs").value) || 0; // Agregar esta línea
+            var dxp = parseFloat(document.getElementById("dxp").value) || 0; // Agregar esta línea
+        
+            var totalDevengado = salDev + auxTrans + boni - dxs - dxp;
+            document.getElementById("td").value = totalDevengado.toFixed(2);
+        }
+
+        function registrarNomina() {
+            event.preventDefault(); 
+        
+            // Asegurarse de que todos los cálculos y fetch se han realizado
+            verificarSalarioYCalcularAuxilio();
+            calcularValorHorasExtras();
+            calcularSalarioDevengado();
+            calcularDescuentos();
+            calcularTotalDevengado();
+        
+            // Verificar que los campos tengan los valores calculados
+            console.log("Auxilio Transporte:", document.getElementById("auxTrans").value);
+            console.log("Valor Horas Extras:", document.getElementById("vhe").value);
+            console.log("Salario Devengado:", document.getElementById("salDev").value);
+        
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "../controllers/inserNomina.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var respuesta = xhr.responseText;
+                    alert(respuesta);
+                }
+            };
+        
+            var formData = new FormData(document.getElementById("formularioNomina"));
+            xhr.send(new URLSearchParams(formData).toString());
+        }
+        
+        // Attach the registrarNomina function to the form's submit event
+        document.getElementById("formularioNomina").addEventListener("submit", registrarNomina);
+
+
+        function verificarCeldas() {
+            if (document.getElementById("numero_nomina").value.trim() === "" ||
+                document.getElementById("cedula").value.trim() === "" ||
+                document.getElementById("suelBa").value.trim() === "" ||
+                document.getElementById("diasLa").value.trim() === "" ||
+                document.getElementById("salario").value.trim() === "" ||
+                document.getElementById("auxTrans").value.trim() === "" ||
+                document.getElementById("vhe").value.trim() === "" ||
+                document.getElementById("salDev").value.trim() === "") {
+                alert("Por favor, asegúrate de que todos los campos requeridos estén llenos.");
+                event.preventDefault();
+            }
+        }
+
+
+
+        
+    </script>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <img src="../../public/img/pape.png">
+            <h2 class="nombre-empresa">CLIP</h2>
+        </div>
+        <nav>
+            <div id="header">
+                <nav>
+                    <ul class="nav">
+                        <li><a class="active" href="index.html">Empleado</a>
+                            <ul>
+                                <li><a href="formularioEmpleado.html">Ingresar Empleado</a></li>
+                                <li><a href="formularioActualizar.html">Actualizar Empleado</a></li>
+                                <li><a href="formularioEliminar.html">Eliminar Empleado</a></li>
+                                <li><a href="gestionAdministrativo.php">Gestión Administrativo</a>
+                                  <ul>
+                                      <li><a href="formularioBonificacion.php">Bonificación</a></li>
+                                  </ul>
+                              </li>
+                            </ul>
+                        </li>
+                        <li><a href="nomina.html">Nomina</a>
+                        </li>
+                        <li><a href="registro.php">Registros</a></li>
+                        <li><a href="logout.php">Salir</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </nav>
+    </header>
+    
+
+    <div class="containerX">
+        <div class="grid-x grid-padding-x">
+            <div class="large-12 cell">
+                <div class="callout">
+                    <h1>Nomina</h1>
+                    <form action="../controllers/inserNomina.php" method="POST" required="required" id="formularioNomina" name="formularioNomina" onsubmit="verificarCeldas(),verificarNumeroNomina()">
+                        <div class="form-row">
+                            <div class="form-column">
+                                <p>Número de la Nómina</p>
+                                <input type="text" class="cel" id="numero_nomina" name="numero_nomina" placeholder="Número de la Nómina" onblur="verificarNumeroNomina() " required><br>
+                            </div>
+                            <div class="form-column">
+                                <p>Fecha</p>
+                                <input type="date" class="cel" id="fecha_nomina" name="fecha_nomina" required><br>
+                            </div>
+                            <div class="form-column">
+                                <p>Año</p>
+                                <select class="cel" id="anio_nomina" name="anio_nomina" required>
+                                    
+                                </select><br>
+                                <hr> 
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <p>Cédula</p>
+                                <input type="text" class="cel" id="cedula" name="cedula" placeholder="Cedula" required>
+                                <input type="button" class="success button" onclick="verificarCedula(), habilitarCampos()" name="verificar_cedula" value="Verificar"><br>
+                            </div>
+                            <div class="form-column">
+                                <p>Sueldo Basico</p>
+                                <input type="text" class="cel" id="suelBa" name="suelBa" placeholder="Sueldo Basico" disabled><br>
+                            </div>
+                            <div class="form-column">
+                                <p>Días Laborados</p>
+                                <select name="diasLa" id="diasLa" class="cel">
+                                    <option value=""></option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="22">22</option>
+                                    <option value="23">23</option>
+                                    <option value="24">24</option>
+                                    <option value="25">25</option>
+                                    <option value="26">26</option>
+                                    <option value="27">27</option>
+                                    <option value="28">28</option>
+                                    <option value="29">29</option>
+                                    <option value="30">30</option>
+                                </select>
+                                <input type="button" class="success button" onclick="verificarSalarioYCalcularAuxilio();" name="calcular_salario" value="Calcular Salario"><br>
+                            </div>
+                            <div class="form-column">
+                                <p>Salario</p>
+                                <input type="text" class="cel" id="salario" name="salario" placeholder="Salario" disabled><br>
+                            </div>
+                            <div class="form-column">
+                                <p>Auxilio Transporte</p>
+                                <input type="text" class="cel" id="auxTrans" name="auxTrans" placeholder="Auxilio Transporte" readonly>
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <p>Horas Extras Diurnas</p>
+                                <input type="text" class="cel" id="hed" name="hed" placeholder="Horas Extras Diurnas">
+                            </div>
+                            <div class="form-column">
+                                <p>Horas Extras Nocturnas</p>
+                                <input type="text" class="cel" id="hen" name="hen" placeholder="Horas Extras Nocturnas">
+                            </div>
+                            <div class="form-column">
+                                <p>Horas Extras Dominicales o Festivos</p>
+                                <input type="text" class="cel" id="hedf" name="hedf" placeholder="Horas Extras Dominicales o Festivos">
+                                <input type="button" class="success button" onclick="calcularValorHorasExtras()" name="calcular" value="Calcular Horas"><br>
+                            </div>
+                            <div class="form-column">
+                                <p>Valor Horas Extras</p>
+                                <input type="text" class="cel" id="vhe" name="vhe" placeholder="Valor Horas Extras">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <p>Bonificación</p>
+                                <select class="cel" id="boni" name="boni" required disabled>
+                                </select><br> 
+                                <hr>                      
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <p>Salario Devengado</p>
+                                <input type="text" class="cel" id="salDev" name="salDev" placeholder="Salario Devengado" readonly>
+                            </div>
+                            <div class="form-column">
+                                <p>Descuento x Salud</p>
+                                <input type="text" class="cel" id="dxs" name="dxs" placeholder="Descuento x Salud" disabled>
+                            </div>
+                            <div class="form-column">
+                                <p>Descuento x Pensión</p>
+                                <input type="text" class="cel" id="dxp" name="dxp" placeholder="Descuento x Pensión" disabled>
+                            </div>
+                            <div class="form-column">
+                                <p>Total Devengado</p>
+                                <input type="text" class="cel" id="td" name="td" placeholder="Total Devengado" disabled>
+                                <input type="button" class="success button" onclick="calcularDescuentos(),calcularTotalDevengado() " name="calcularTotal" value="Calcular Total"><br>
+                            </div>
+                        </div>
+                        <input type="submit" class="success button" name="registrar" value="Registrar">
+                        <input type="reset" class="alert button" name="cancelar" value="Cancelar">
+                        <input type="submit" class="button" onclick="location.href='../views/index.html'" value="Atras">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+

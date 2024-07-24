@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../public/css/style.css">
+    <title>PAPELERIA CLIP</title>
+
+    <style>
+        body{
+            margin: 0;
+            background-color: #ffff;
+          }
+          header {
+              display: flex;
+              height: 100px;
+              background-color: rgb(0, 0, 0);
+              justify-content: space-between;
+              align-items: center;
+              padding: 10px;
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              z-index: 1000; 
+          }
+  
+          .containerX {
+              margin-top: 150px; /* Ajusta el margen superior para dejar espacio para el menú */
+              position: relative;
+              z-index: 999; /* Asegura que el formulario esté por debajo del menú */
+          }
+            body{
+              font-family:sans-serif;
+              
+            }
+            .logo{
+              display: flex;
+              align-items:center;
+            }
+            a {
+              text-decoration:none;
+              list-style: none;
+              color:black;
+            }
+            ul{
+              list-style:none;
+            }
+            .logo img{
+              height:80px;
+              
+            }
+            ul, ol {
+                    list-style:none;
+           
+                }
+                
+          .nav{
+            width: 500px;
+            margin: 0 auto; 
+          }
+                
+          h2{
+            background-color:rgb(0, 0, 0);
+            font-size:50px;
+            
+            padding-top:23px;
+            color:rgb(255, 255, 255);
+            text-transform:uppercase;
+          }
+                .nav > li {
+                    float:left;
+                }
+                
+                .nav li a {
+                    background-color:rgb(0, 0, 0);
+                    color:#ffffff;
+                    text-decoration:none;
+                    padding:10px 12px;
+                    display:block;
+                    font-size: 25px;
+                    border-radius: 15px;
+                    margin-right:5px;
+                    margin-bottom:5px;
+                }
+                
+                .nav li a:hover {
+                    background-color:#787171;
+                }
+                
+                .nav li ul {
+                    display:none;
+                    position:absolute;
+                    min-width:140px;
+                    z-index: 999;
+           
+                }
+                
+                 .nav li:hover > ul {
+                    display:block;
+                }
+                
+                .nav li ul li {
+                    position:relative;
+           
+                }
+                
+                .nav li ul li ul {
+                    right:-140px;
+                    top:0px;
+          }
+  </style>
+
+
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+        <img src="../../public/img/pape.png">
+        <h2 class="nombre-empresa">CLIP</h2>
+    </div>
+    <nav>
+        <div id="header">
+            <nav>
+                <ul class="nav">
+                    <li><a class="active" href="index.html">Empleado</a>
+                        <ul>
+                            <li><a href="formularioEmpleado.html">Ingresar Empleado</a></li>
+                            <li><a href="formularioActualizar.html">Actualizar Empleado</a></li>
+                            <li><a href="formularioEliminar.html">Eliminar Empleado</a></li>
+                            <li><a href="gestionAdministrativo.php">Gestión Administrativo</a>
+                              <ul>
+                                  <li><a href="formularioBonificacion.php">Bonificación</a></li>
+                              </ul>
+                          </li>
+                        </ul>
+                    </li>
+                    <li><a href="nomina.html">Nomina</a>
+                    </li>
+                    <li><a href="registro.php">Registros</a></li>
+                    <li><a href="logout.php">Salir</a></li>
+                </ul>
+            </nav>
+        </div>
+    </nav>
+</header>
+
+
+ 
+
+
+</body>
+</html>

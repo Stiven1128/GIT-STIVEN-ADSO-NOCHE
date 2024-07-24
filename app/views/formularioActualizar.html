@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../public/css/foundation.css">
+    <link rel="stylesheet" href="../../public/css/app.css">
+    <link rel="stylesheet" href="../../public/css/FormularioEmpleado.css">
+    <title>Formulario</title>
+
+    <style>
+        body{
+            margin: 0;
+            background-color: #ffff;
+          }
+          header {
+              display: flex;
+              height: 100px;
+              background-color: rgb(0, 0, 0);
+              justify-content: space-between;
+              align-items: center;
+              padding: 10px;
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              z-index: 1000; 
+          }
+  
+          .containerX {
+              margin-top: 150px; /* Ajusta el margen superior para dejar espacio para el menú */
+              position: relative;
+              z-index: 999; /* Asegura que el formulario esté por debajo del menú */
+          }
+            body{
+              font-family:sans-serif;
+              
+            }
+            .logo{
+              display: flex;
+              align-items:center;
+            }
+            a {
+              text-decoration:none;
+              list-style: none;
+              color:black;
+            }
+            ul{
+              list-style:none;
+            }
+            .logo img{
+              height:80px;
+              
+            }
+            ul, ol {
+                    list-style:none;
+           
+                }
+                
+          .nav{
+            width: 500px;
+            margin: 0 auto; 
+          }
+                
+          h2{
+            background-color:rgb(0, 0, 0);
+            font-size:50px;
+            
+            padding-top:23px;
+            color:rgb(255, 255, 255);
+            text-transform:uppercase;
+          }
+                .nav > li {
+                    float:left;
+                }
+                
+                .nav li a {
+                    background-color:rgb(0, 0, 0);
+                    color:#ffffff;
+                    text-decoration:none;
+                    padding:10px 12px;
+                    display:block;
+                    font-size: 25px;
+                    border-radius: 15px;
+                    margin-right:5px;
+                    margin-bottom:5px;
+                }
+                
+                .nav li a:hover {
+                    background-color:#787171;
+                }
+                
+                .nav li ul {
+                    display:none;
+                    position:absolute;
+                    min-width:140px;
+                    z-index: 999;
+           
+                }
+                
+                 .nav li:hover > ul {
+                    display:block;
+                }
+                
+                .nav li ul li {
+                    position:relative;
+           
+                }
+                
+                .nav li ul li ul {
+                    right:-140px;
+                    top:0px;
+          }
+      </style>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded",function(){
+            document.getElementById("nombres").setAttribute("disabled", "disabled");
+            document.getElementById("apellidos").setAttribute("disabled", "disabled");
+            document.getElementById("direccion").setAttribute("disabled", "disabled");
+            document.getElementById("telefono").setAttribute("disabled", "disabled");
+            document.getElementById("correo").setAttribute("disabled", "disabled");
+            document.getElementById("cargo").setAttribute("disabled", "disabled");
+            document.getElementById("sueldo").setAttribute("disabled", "disabled");
+        });
+
+        function habilitarCampos() {
+            document.getElementById("cedula").readOnly = true;
+            document.getElementById("direccion").removeAttribute("disabled");
+            document.getElementById("telefono").removeAttribute("disabled");
+            document.getElementById("correo").removeAttribute("disabled");
+            document.getElementById("cargo").removeAttribute("disabled");
+            document.getElementById("sueldo").removeAttribute("disabled");
+        }
+        
+        
+        function verificarCedula() {
+            var cedula = document.getElementById("cedula").value;
+            // Crear objeto XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+            
+            // Configurar la solicitud
+            xhr.open("POST", "../controllers/verify.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            // Manejar la respuesta
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var respuesta = xhr.responseText;
+                    if (respuesta != "error") {
+                        // Parsear los datos JSON recibidos
+                        var empleado = JSON.parse(respuesta);
+                        console.log(empleado);
+                        
+                        // Mostrar los datos en los campos del formulario
+                        document.getElementById("nombres").value = empleado.nombres;
+                        document.getElementById("apellidos").value = empleado.apellidos;
+                        document.getElementById("direccion").value = empleado.direccion;
+                        document.getElementById("telefono").value = empleado.telefono;
+                        document.getElementById("correo").value = empleado.correo;
+                        document.getElementById("cargo").value = empleado.cargo;
+                        document.getElementById("sueldo").value = empleado.sueldo;
+                    } else {
+                        alert("La cédula no se encuentra registrada.");
+                    }
+                }
+            };
+
+            // Enviar la solicitud con los datos de la cédula
+            xhr.send("cedula=" + parseInt(cedula));
+        }
+
+        
+    </script>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+        <img src="../../public/img/pape.png">
+        <h2 class="nombre-empresa">CLIP</h2>
+    </div>
+    <nav>
+        <div id="header">
+            <nav>
+                <ul class="nav">
+                    <li><a class="active" href="index.html">Empleado</a>
+                      <ul>
+                        <li><a href="formularioEmpleado.html">Ingresar Empleado</a></li>
+                        <li><a href="formularioActualizar.html">Actualizar Empleado</a></li>
+                        <li><a href="formularioEliminar.html">Eliminar Empleado</a></li>
+                        <li><a href="gestionAdministrativo.php">Gestión Administrativo</a>
+                          <ul>
+                              <li><a href="formularioBonificacion.php">Bonificación</a></li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><a href="nomina.html">Nomina</a>
+                    </li>
+                    <li><a href="registro.php">Registros</a></li>
+                    <li><a href="logout.php">Salir</a></li>
+                </ul>
+            </nav>
+        </div>
+    </nav>
+</header>
+
+    
+
+    <div class="containerX">
+        <div class="grid-x grid-padding-x">
+            <div class="large-12 cell">
+                <div class="callout">
+                    <h1>Formulario Empleado</h1>
+                    <form action="../controllers/update.php"  method="POST" required="required" name="form1">
+                        <p>Cedula</p>
+                        <input type="text" class="cel" id="cedula" name="cedula" placeholder="Cedula"  required>
+                        <div class="form-row">
+                            <div class="form-column">
+                                <input type="button" class="success button" onclick="verificarCedula(), habilitarCampos() " name=" verificar_cedula " value="Verificar"><br>
+                            </div>
+                            <div class="form-column">
+                                <p>Nombres</p>
+                                <input type="text" class="cel" id="nombres" name="nombre" placeholder="Nombres" ><br>
+                            </div>
+                            <div class="form-column">
+                                <p>Apellidos</p>
+                                <input type="text" class="cel" id="apellidos" name="apellido" placeholder="Apellidos" ><br>
+                            </div>
+                            <div class="form-column">    
+                                <p>Dirección</p>
+                                <input type="text" class="cel" id="direccion" name="direccion" placeholder="Dirección" >
+                            </div>
+                            <div class="form-column">    
+                                <p>Telefono</p>
+                                <input type="text" class="cel" id="telefono" name="telefono" placeholder="Telefono" ><br>
+                            </div>
+                            <div class="form-column">    
+                                <p>Correo</p>
+                                <input type="text" class="cel" id="correo" name="correo" placeholder="Correo" >
+                            </div>
+                            <div class="form-column">
+                                <p>Cargo</p>
+                                <input type="text" class="cel" id="cargo" name="cargo" placeholder="Cargo" >
+                            </div>
+                            <div class="form-column">    
+                                <p>Sueldo</p>
+                                <input type="text" class="cel" id="sueldo" name="sueldo" placeholder="Sueldo" >
+                            </div>    
+                                <br>
+                                <br>
+                            <div class="form-row">
+                                <div class="large-4 medium-4 cell">
+                                    <input type="submit" class="success button" name="actulizar_empleado" value="Actualizar">
+                                    <input type="button" onclick="window.consulta.showModal();" class="button"  value="Consultar"  >
+                                    <input type="reset" class="alert button" value="Limpiar">
+                                    <input type="submit" class="alert button" onclick="location.href='../views/index.html'" value="Atras">
+                                               
+                                </div>
+                            </div>
+                                <dialog id="consulta" >
+                                    <iframe src="../controllers/select.php"  width="600" height="400"></iframe>
+                                    <input type="submit" onclick="window.consulta.close();" class="button"  value="Cerrar">
+                                </dialog>
+                            </div>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+</html>
